@@ -349,13 +349,25 @@ async function processSubmission() {
           ]
         };
 
-        await fetch(discordConfig.webhookUrl, {
+        // Use FormData with 'payload_json' to send a simple request and completely bypass browser CORS preflight blocks
+        const formData = new FormData();
+        formData.append("payload_json", JSON.stringify(embedPayload));
+
+        const response = await fetch(discordConfig.webhookUrl, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(embedPayload)
+          body: formData
         });
+        
+        if (!response.ok) {
+          throw new Error(`Discord Webhook returned status code: ${response.status}`);
+        }
+        console.log("Discord notification successfully dispatched.");
+      } else {
+        if (discordConfig.isFileProtocol) {
+          console.warn("Discord Webhook skipped: browser blocked loading /.env because of file:// protocol.");
+        } else {
+          console.warn("Discord Webhook skipped: DISCORD_WEBHOOK_URL is not configured in /.env");
+        }
       }
     } catch (discordErr) {
       console.error("Failed to send Discord notification directly:", discordErr);

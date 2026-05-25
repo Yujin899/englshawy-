@@ -11,6 +11,7 @@ const scorePercentage = document.getElementById("score-percentage");
 const badgeGrade = document.getElementById("badge-grade");
 const studentDisplayName = document.getElementById("student-display-name");
 const studentMeta = document.getElementById("student-meta");
+const resultGreeting = document.getElementById("result-greeting");
 
 const statCorrect = document.getElementById("stat-correct");
 const statWrong = document.getElementById("stat-wrong");
@@ -42,6 +43,13 @@ async function init() {
     // 2. Populate stats & metadata
     studentDisplayName.textContent = escapeHtml(submission.studentName);
     studentMeta.textContent = `Quiz: ${escapeHtml(submission.quizTitle)}`;
+    
+    // Dynamic greeting based on grade (passing vs failing)
+    if (submission.grade === "Fail") {
+      resultGreeting.textContent = "Keep trying";
+    } else {
+      resultGreeting.textContent = "Congratulations";
+    }
     
     const correctCount = submission.score !== undefined ? submission.score : 0;
     const totalQuestions = submission.answers ? submission.answers.length : 0;

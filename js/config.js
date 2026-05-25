@@ -24,7 +24,18 @@ export { app, auth, db };
  * Dynamically loads and parses the .env file at runtime to extract the Discord Webhook URL.
  */
 export async function getDiscordConfig() {
+  // 1. OPTIONAL: Paste your Discord Webhook URL directly below to bypass .env loading (highly useful for quick testing or file:// protocol)
+  const HARDCODED_DISCORD_WEBHOOK_URL = "https://discordapp.com/api/webhooks/1508553076003438654/CYjtXHjja-WhXV-m-Fo5YsNxKEmGWNQWNzJZ4jA2VNHs3-P1RLZYODd_kkIW20jUZ0KE"; 
+
+  if (HARDCODED_DISCORD_WEBHOOK_URL) {
+    return { webhookUrl: HARDCODED_DISCORD_WEBHOOK_URL };
+  }
+
   try {
+    if (window.location.protocol === 'file:') {
+      console.error("AuraQuiz local test error: Browser blocks reading /.env via file:// protocol. Run a local server (like VS Code Live Server or npm run dev) to test env variables, or paste your webhook directly into HARDCODED_DISCORD_WEBHOOK_URL in js/config.js.");
+      return { webhookUrl: null, isFileProtocol: true };
+    }
     const response = await fetch('/.env');
     if (!response.ok) {
       console.warn("Could not find or fetch the /.env file. Make sure it exists in the root folder.");
