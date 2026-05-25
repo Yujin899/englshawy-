@@ -1,7 +1,7 @@
 // Student Quiz Taking Controller (Light Mode UI)
 import { getQuizById, addSubmission } from "./db.js";
 import { showLoader, hideLoader, showConfirmModal, toast } from "./ui.js";
-import { TELEGRAM_WEBHOOK_URL } from "./config.js";
+import { getTelegramConfig } from "./config.js";
 
 // Page State Variables
 let quiz = null;
@@ -290,20 +290,58 @@ async function processSubmission() {
     // Save to database
     const submissionId = await addSubmission(submissionPayload);
 
-    // Secure Telegram Webhook trigger (Free alternative to Cloud Functions)
-    if (TELEGRAM_WEBHOOK_URL && TELEGRAM_WEBHOOK_URL !== "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") {
-      try {
-        await fetch(TELEGRAM_WEBHOOK_URL, {
+    // Dynamic direct Telegram Notification dispatch
+    try {
+      const telegramConfig = await getTelegramConfig();
+      if (telegramConfig.botToken && telegramConfig.chatId) {
+        const wrongCount = totalQuestions - score;
+        
+        // Format date and time
+        const date = new Date();
+        const submissionTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + " - " + date.toLocaleDateString();
+
+        // Build the Telegram message body matching the exact format requirement
+        const message = `📚 *New Quiz Submission*
+
+👤 *Student:*
+${studentName}
+
+📝 *Quiz:*
+${quiz.title}
+
+✅ *Correct:*
+${score}
+
+❌ *Wrong:*
+${wrongCount}
+
+📊 *Score:*
+${score}/${totalQuestions}
+
+📈 *Percentage:*
+${percentage}%
+
+🏆 *Grade:*
+${grade}
+
+⏰ *Time:*
+${submissionTime}`;
+
+        const url = `https://api.telegram.org/bot${telegramConfig.botToken}/sendMessage`;
+        await fetch(url, {
           method: "POST",
-          mode: "no-cors",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify(submissionPayload)
+          body: JSON.stringify({
+            chat_id: telegramConfig.chatId,
+            text: message,
+            parse_mode: "Markdown"
+          })
         });
-      } catch (webhookErr) {
-        console.error("Telegram Webhook call failed:", webhookErr);
       }
+    } catch (telegramErr) {
+      console.error("Failed to send Telegram message directly:", telegramErr);
     }
 
     // Stop timer

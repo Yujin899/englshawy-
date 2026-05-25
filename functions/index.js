@@ -45,7 +45,7 @@ exports.sendTelegramNotification = onDocumentCreated("submissions/{submissionId}
   const message = `📚 *New Quiz Submission*
 
 👤 *Student:*
-${submission.studentName} (${submission.studentId || "No ID"})
+${submission.studentName}
 
 📝 *Quiz:*
 ${submission.quizTitle}

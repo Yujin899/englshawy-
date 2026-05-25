@@ -19,5 +19,44 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 export { app, auth, db };
-export const TELEGRAM_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbylV6qL3Eq5XTBvDIyYAsPI8w-Fo5omttynWZg8lsOyQAoaww3E_jApcAJC7cb2r1Ie/exec";
+
+/**
+ * Dynamically loads and parses the .env file at runtime to extract Telegram botToken and chatId.
+ */
+export async function getTelegramConfig() {
+  try {
+    const response = await fetch('/.env');
+    if (!response.ok) {
+      console.warn("Could not find or fetch the /.env file. Make sure it exists in the root folder.");
+      return { botToken: null, chatId: null };
+    }
+    const text = await response.text();
+    const config = { botToken: null, chatId: null };
+    
+    text.split(/\r?\n/).forEach(line => {
+      const clean = line.trim();
+      if (!clean || clean.startsWith('#')) return;
+      
+      const equalsIdx = clean.indexOf('=');
+      if (equalsIdx !== -1) {
+        const key = clean.substring(0, equalsIdx).trim();
+        let val = clean.substring(equalsIdx + 1).trim();
+        
+        // Strip outer quotes
+        if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+          val = val.substring(1, val.length - 1);
+        }
+        
+        if (key === 'TELEGRAM_BOT_TOKEN') config.botToken = val;
+        if (key === 'TELEGRAM_CHAT_ID') config.chatId = val;
+      }
+    });
+    
+    return config;
+  } catch (err) {
+    console.error("Failed to parse .env file:", err);
+    return { botToken: null, chatId: null };
+  }
+}
+
 export default app;

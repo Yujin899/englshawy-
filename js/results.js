@@ -41,7 +41,7 @@ async function init() {
 
     // 2. Populate stats & metadata
     studentDisplayName.textContent = escapeHtml(submission.studentName);
-    studentMeta.textContent = `Quiz: ${escapeHtml(submission.quizTitle)} • ID: ${escapeHtml(submission.studentId || "N/A")}`;
+    studentMeta.textContent = `Quiz: ${escapeHtml(submission.quizTitle)}`;
     
     const correctCount = submission.score !== undefined ? submission.score : 0;
     const totalQuestions = submission.answers ? submission.answers.length : 0;
