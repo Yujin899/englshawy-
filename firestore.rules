@@ -1,0 +1,34 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Check if the request is from an authenticated user
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Quizzes collection
+    match /quizzes/{quizId} {
+      // Anyone can fetch a specific quiz to take it
+      allow get: if true;
+      // Only authenticated admins can list, create, update, or delete quizzes
+      allow list, create, update, delete: if isAuthenticated();
+    }
+
+    // Submissions collection
+    match /submissions/{submissionId} {
+      // Anyone can submit quiz answers
+      allow create: if true;
+      // Anyone can fetch their specific submission details for results display
+      allow get: if true;
+      // Only authenticated admins can list and query all student submissions
+      allow list, update, delete: if isAuthenticated();
+    }
+
+    // Users collection (For potential admin settings or profile data)
+    match /users/{userId} {
+      // Only authenticated users can read or write admin profiles
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+  }
+}

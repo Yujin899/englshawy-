@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Englshawy — English Quiz Platform</title>
+  <meta name="description" content="Take English quizzes, test your grammar, and view your results instantly.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="min-h-screen bg-zinc-100 text-zinc-900 flex flex-col justify-between overflow-x-hidden selection:bg-indigo-100">
+
+  <!-- Header -->
+  <header class="border-b border-zinc-200 bg-white/80 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-xl font-bold text-indigo-600">englshawy</span>
+        <span class="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-zinc-200 text-zinc-600 border border-zinc-300">v1.0</span>
+      </div>
+      <div>
+        <a href="/login.html" class="px-4 py-2 text-sm font-semibold rounded-xl text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 border border-zinc-200 transition-all">
+          Admin Portal
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="flex-grow flex items-center justify-center py-20 px-6">
+    <div class="max-w-xl w-full text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-200 bg-indigo-50 text-indigo-600 text-xs font-semibold mb-6">
+        <span>Practice English Quizzes</span>
+      </div>
+      
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-zinc-900 mb-4 leading-tight">
+        Improve your English with <br>
+        <span class="text-indigo-600">interactive tests</span>
+      </h1>
+      
+      <p class="text-sm sm:text-base text-zinc-500 mb-10 max-w-md mx-auto leading-relaxed">
+        Answer grammar, vocabulary, and reading comprehension questions, and check your score and detailed answer review immediately.
+      </p>
+
+      <!-- Student Entrance Panel -->
+      <div class="glass-panel p-6 sm:p-8 rounded-2xl max-w-md mx-auto shadow-sm border-zinc-200">
+        <h2 class="text-lg font-bold text-zinc-800 mb-1">Enter Quiz Code</h2>
+        <p class="text-xs text-zinc-500 mb-6">Please type the code provided by your teacher to open the test.</p>
+        
+        <form id="join-quiz-form" class="space-y-4">
+          <div class="relative">
+            <input 
+              type="text" 
+              id="quiz-code-input" 
+              placeholder="e.g. abc123XYZ" 
+              class="w-full px-4 py-3 rounded-xl custom-input text-center text-zinc-800 font-mono tracking-wider placeholder:font-sans placeholder:tracking-normal text-sm"
+              required
+            >
+          </div>
+          <button 
+            type="submit" 
+            class="w-full py-3 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-sm flex items-center justify-center gap-2"
+          >
+            <span>Start Quiz</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-zinc-200 bg-white py-6 text-center text-xs text-zinc-500">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <span>© 2026 englshawy. Private English Training Portal.</span>
+      <div class="flex gap-4">
+        <a href="/login.html" class="hover:text-zinc-800 transition-colors">Admin Portal</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { toast } from "/js/ui.js";
+
+    document.getElementById("join-quiz-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const code = document.getElementById("quiz-code-input").value.trim();
+      if (code) {
+        window.location.href = `/quiz.html?id=${encodeURIComponent(code)}`;
+      } else {
+        toast.show("Please enter a valid Quiz ID.", "error");
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Sign Up — englshawy</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✏️</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="min-h-screen bg-zinc-100 text-zinc-900 flex flex-col justify-between overflow-x-hidden selection:bg-indigo-100">
+
+  <!-- Header -->
+  <header class="border-b border-zinc-200 bg-white/80 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="/index.html" class="flex items-center gap-2">
+        <span class="text-xl font-bold text-indigo-600">englshawy</span>
+      </a>
+      <a href="/index.html" class="text-sm font-medium text-zinc-600 hover:text-zinc-900 flex items-center gap-1 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        <span>Back Home</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Signup Form Area -->
+  <main class="flex-grow flex items-center justify-center py-16 px-6">
+    <div class="glass-panel max-w-md w-full p-8 rounded-2xl shadow-sm border-zinc-200 relative z-10">
+      <div class="text-center mb-8">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-4 border border-indigo-100 shadow-sm">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m4 8h.01M19 21h-6a2 2 0 01-2-2V9a2 2 0 012-2h6a2 2 0 012 2v10a2 2 0 01-2 2z"></path></svg>
+        </div>
+        <h1 class="text-2xl font-bold text-zinc-800">Admin Sign Up</h1>
+        <p class="text-xs text-zinc-500 mt-2">Create an account to build quizzes and track submissions</p>
+      </div>
+
+      <form id="signup-form" class="space-y-4">
+        <div>
+          <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">Email Address</label>
+          <input 
+            type="email" 
+            id="email" 
+            placeholder="admin@englshawy.com" 
+            class="w-full px-4 py-3 rounded-xl custom-input text-zinc-800 text-sm"
+            required
+          >
+        </div>
+
+        <div>
+          <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            placeholder="Min 6 characters" 
+            class="w-full px-4 py-3 rounded-xl custom-input text-zinc-800 text-sm font-mono placeholder:font-sans"
+            required
+          >
+        </div>
+
+        <div>
+          <label for="confirm-password" class="block text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">Confirm Password</label>
+          <input 
+            type="password" 
+            id="confirm-password" 
+            placeholder="Re-enter password" 
+            class="w-full px-4 py-3 rounded-xl custom-input text-zinc-800 text-sm font-mono placeholder:font-sans"
+            required
+          >
+        </div>
+
+        <button 
+          type="submit" 
+          id="submit-btn"
+          class="w-full py-3 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-sm flex items-center justify-center gap-2 mt-6"
+        >
+          <span>Register Account</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m4 8h.01M19 21h-6a2 2 0 01-2-2V9a2 2 0 012-2h6a2 2 0 012 2v10a2 2 0 01-2 2z"></path></svg>
+        </button>
+      </form>
+
+      <div class="mt-6 text-center text-xs">
+        <span class="text-zinc-500">Already have an account? </span>
+        <a href="/login.html" class="text-indigo-600 hover:text-indigo-800 font-semibold transition-colors">Sign In</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-zinc-200 bg-white py-6 text-center text-xs text-zinc-500">
+    <span>© 2026 englshawy. Registration portal.</span>
+  </footer>
+
+  <!-- Controller Script -->
+  <script type="module">
+    import { initAuthGuard, signupAdmin } from "/js/auth.js";
+    import { showLoader, hideLoader, toast } from "/js/ui.js";
+
+    // Guard checks: redirects to /admin.html if already logged in
+    initAuthGuard(false);
+
+    const signupForm = document.getElementById("signup-form");
+    const submitBtn = document.getElementById("submit-btn");
+
+    signupForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
+
+      if (!email || !password || !confirmPassword) {
+        toast.show("Please fill out all fields.", "error");
+        return;
+      }
+
+      if (password.length < 6) {
+        toast.show("Password must be at least 6 characters long.", "error");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        toast.show("Passwords do not match.", "error");
+        return;
+      }
+
+      try {
+        showLoader();
+        submitBtn.disabled = true;
+        submitBtn.querySelector("span").textContent = "Creating Account...";
+        
+        await signupAdmin(email, password);
+        
+        // Redirection on success to admin panel
+        window.location.href = "/admin.html";
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.querySelector("span").textContent = "Register Account";
+        hideLoader();
+      }
+    });
+  </script>
+</body>
+</html>
