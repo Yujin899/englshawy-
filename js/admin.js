@@ -320,10 +320,7 @@ function filterSubmissionsData() {
   const quizIdFilter = submissionFilterQuiz.value;
 
   filteredSubmissions = submissions.filter(sub => {
-    const matchesSearch = 
-      sub.studentName.toLowerCase().includes(queryText) || 
-      (sub.studentId && sub.studentId.toLowerCase().includes(queryText));
-    
+    const matchesSearch = sub.studentName.toLowerCase().includes(queryText);
     const matchesQuiz = !quizIdFilter || sub.quizId === quizIdFilter;
 
     return matchesSearch && matchesQuiz;
@@ -367,7 +364,6 @@ function renderSubmissions() {
     tr.innerHTML = `
       <td class="p-4">
         <div class="font-semibold text-zinc-800">${escapeHtml(sub.studentName)}</div>
-        <div class="text-[10px] text-zinc-400 font-mono">${escapeHtml(sub.studentId || "No ID")}</div>
       </td>
       <td class="p-4 max-w-[150px] truncate text-zinc-700 font-medium">${escapeHtml(sub.quizTitle)}</td>
       <td class="p-4 text-center font-mono font-bold text-zinc-800">${correctCount}/${totalQuestions}</td>
@@ -409,7 +405,7 @@ async function showSubmissionDetails(submissionId) {
     if (!sub) return;
 
     modalStudentName.textContent = escapeHtml(sub.studentName);
-    modalStudentMeta.textContent = `${escapeHtml(sub.quizTitle)} • ${escapeHtml(sub.studentId || "No Student ID")}`;
+    modalStudentMeta.textContent = `${escapeHtml(sub.quizTitle)}`;
     modalAnswersContainer.innerHTML = '<div class="py-6 flex justify-center"><div class="animate-spin rounded-full h-6 w-6 border-2 border-zinc-300 border-t-indigo-600"></div></div>';
     
     // Set score and grade

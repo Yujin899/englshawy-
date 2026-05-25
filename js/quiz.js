@@ -6,7 +6,6 @@ import { TELEGRAM_WEBHOOK_URL } from "./config.js";
 // Page State Variables
 let quiz = null;
 let studentName = "";
-let studentId = "";
 let studentAnswers = []; // Holds selected option index for each question
 let timerInterval = null;
 let secondsRemaining = 0;
@@ -95,7 +94,6 @@ function handleRegistrationSubmit(e) {
   e.preventDefault();
   
   studentName = document.getElementById("student-name").value.trim();
-  studentId = document.getElementById("student-id").value.trim() || "";
 
   if (!studentName) {
     toast.show("Please enter your name.", "error");
@@ -283,7 +281,6 @@ async function processSubmission() {
       quizId: quiz.id,
       quizTitle: quiz.title,
       studentName: studentName,
-      studentId: studentId || "N/A",
       answers: studentAnswers,
       score: score,
       percentage: percentage,
