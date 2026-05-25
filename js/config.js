@@ -21,17 +21,17 @@ const db = getFirestore(app);
 export { app, auth, db };
 
 /**
- * Dynamically loads and parses the .env file at runtime to extract Telegram botToken and chatId.
+ * Dynamically loads and parses the .env file at runtime to extract the Discord Webhook URL.
  */
-export async function getTelegramConfig() {
+export async function getDiscordConfig() {
   try {
     const response = await fetch('/.env');
     if (!response.ok) {
       console.warn("Could not find or fetch the /.env file. Make sure it exists in the root folder.");
-      return { botToken: null, chatId: null };
+      return { webhookUrl: null };
     }
     const text = await response.text();
-    const config = { botToken: null, chatId: null };
+    const config = { webhookUrl: null };
     
     text.split(/\r?\n/).forEach(line => {
       const clean = line.trim();
@@ -47,15 +47,14 @@ export async function getTelegramConfig() {
           val = val.substring(1, val.length - 1);
         }
         
-        if (key === 'TELEGRAM_BOT_TOKEN') config.botToken = val;
-        if (key === 'TELEGRAM_CHAT_ID') config.chatId = val;
+        if (key === 'DISCORD_WEBHOOK_URL') config.webhookUrl = val;
       }
     });
     
     return config;
   } catch (err) {
     console.error("Failed to parse .env file:", err);
-    return { botToken: null, chatId: null };
+    return { webhookUrl: null };
   }
 }
 

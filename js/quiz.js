@@ -1,7 +1,7 @@
 // Student Quiz Taking Controller (Light Mode UI)
 import { getQuizById, addSubmission } from "./db.js";
 import { showLoader, hideLoader, showConfirmModal, toast } from "./ui.js";
-import { getTelegramConfig } from "./config.js";
+import { getDiscordConfig } from "./config.js";
 
 // Page State Variables
 let quiz = null;
@@ -290,58 +290,75 @@ async function processSubmission() {
     // Save to database
     const submissionId = await addSubmission(submissionPayload);
 
-    // Dynamic direct Telegram Notification dispatch
+    // Dynamic direct Discord Webhook dispatch
     try {
-      const telegramConfig = await getTelegramConfig();
-      if (telegramConfig.botToken && telegramConfig.chatId) {
+      const discordConfig = await getDiscordConfig();
+      if (discordConfig.webhookUrl) {
         const wrongCount = totalQuestions - score;
         
         // Format date and time
         const date = new Date();
         const submissionTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + " - " + date.toLocaleDateString();
 
-        // Build the Telegram message body matching the exact format requirement
-        const message = `📚 *New Quiz Submission*
+        const embedPayload = {
+          embeds: [
+            {
+              title: "📚 New Quiz Submission",
+              color: 6516991, // Indigo hex color #6366f1 as decimal representation
+              fields: [
+                {
+                  name: "👤 Student Name",
+                  value: studentName,
+                  inline: true
+                },
+                {
+                  name: "📝 Quiz Title",
+                  value: quiz.title,
+                  inline: true
+                },
+                {
+                  name: "✅ Correct Answers",
+                  value: `${score} / ${totalQuestions}`,
+                  inline: true
+                },
+                {
+                  name: "❌ Wrong Answers",
+                  value: `${wrongCount}`,
+                  inline: true
+                },
+                {
+                  name: "📈 Percentage",
+                  value: `${percentage}%`,
+                  inline: true
+                },
+                {
+                  name: "🏆 Grade",
+                  value: grade,
+                  inline: true
+                },
+                {
+                  name: "⏰ Submitted At",
+                  value: submissionTime,
+                  inline: false
+                }
+              ],
+              footer: {
+                text: "englshawy Quiz Platform"
+              }
+            }
+          ]
+        };
 
-👤 *Student:*
-${studentName}
-
-📝 *Quiz:*
-${quiz.title}
-
-✅ *Correct:*
-${score}
-
-❌ *Wrong:*
-${wrongCount}
-
-📊 *Score:*
-${score}/${totalQuestions}
-
-📈 *Percentage:*
-${percentage}%
-
-🏆 *Grade:*
-${grade}
-
-⏰ *Time:*
-${submissionTime}`;
-
-        const url = `https://api.telegram.org/bot${telegramConfig.botToken}/sendMessage`;
-        await fetch(url, {
+        await fetch(discordConfig.webhookUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({
-            chat_id: telegramConfig.chatId,
-            text: message,
-            parse_mode: "Markdown"
-          })
+          body: JSON.stringify(embedPayload)
         });
       }
-    } catch (telegramErr) {
-      console.error("Failed to send Telegram message directly:", telegramErr);
+    } catch (discordErr) {
+      console.error("Failed to send Discord notification directly:", discordErr);
     }
 
     // Stop timer

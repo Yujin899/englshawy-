@@ -1,6 +1,6 @@
 # englshawy — English Quiz Platform
 
-A complete, production-ready serverless Quiz Platform built with HTML, CSS, Tailwind CSS, Vanilla JavaScript (ES6+), Firebase Firestore, Firebase Authentication, Firebase Hosting, and Firebase Cloud Functions.
+A complete, production-ready serverless Quiz Platform built with HTML, CSS, Tailwind CSS, Vanilla JavaScript (ES6+), Firebase Firestore, Firebase Authentication, and Firebase Hosting.
 
 ---
 
@@ -14,19 +14,16 @@ A complete, production-ready serverless Quiz Platform built with HTML, CSS, Tail
 ├── create-quiz.html           # Dynamic Quiz creator
 ├── quiz.html                  # Student quiz-taking page (with active timer)
 ├── results.html               # Student result scorecard (confetti + question reviews)
-├── firebase.json              # Firebase Hosting / Functions configuration
+├── firebase.json              # Firebase Hosting configuration
 ├── firestore.rules            # Firestore security rules
 ├── firestore.indexes.json     # Firestore indexing configurations
 ├── css/
 │   └── styles.css             # Core style sheets, custom scrollbars
-├── js/
-│   ├── config.js              # Firebase core client SDK config
-│   ├── auth.js                # Router guards and logins helpers
-│   ├── db.js                  # Quiz and Submission collections services
-│   └── ui.js                  # Dynamic alerts, spinners, and confirms
-└── functions/                 # Backend Node.js Cloud Functions trigger
-    ├── index.js               # Firestore onDocumentCreated Telegram dispatch
-    └── package.json           # Cloud function modules manifest
+└── js/
+    ├── config.js              # Firebase core client SDK config
+    ├── auth.js                # Router guards and logins helpers
+    ├── db.js                  # Quiz and Submission collections services
+    └── ui.js                  # Dynamic alerts, spinners, and confirms
 ```
 
 ---
@@ -65,19 +62,17 @@ const firebaseConfig = {
 
 ---
 
-## Telegram Integration Setup
+## Discord Webhook Setup
 
-To securely deliver notifications to the administrator without exposing bot credentials:
+To deliver quiz submission notifications directly to your Discord server:
 
-1. Create a new Telegram Bot using [@BotFather](https://t.me/BotFather) and copy the **HTTP API Bot Token**.
-2. Retrieve your Telegram **Chat ID** (or channel ID if sending to a channel) using [@userinfobot](https://t.me/userinfobot) or [@IDBot](https://t.me/IDBot).
-3. Create a `.env` configuration file inside the `/functions` directory:
-   ```bash
-   # Create file: /functions/.env
-   TELEGRAM_BOT_TOKEN="your_bot_token_here"
-   TELEGRAM_CHAT_ID="your_chat_id_here"
+1. Open your Discord server, go to **Server Settings > Integrations > Webhooks**, and click **Create Webhook**.
+2. Choose the name of the webhook and select the channel where notifications should be posted.
+3. Click **Copy Webhook URL**.
+4. Save the webhook URL in the `.env` file located in the root of the project:
+   ```env
+   DISCORD_WEBHOOK_URL="your_copied_discord_webhook_url_here"
    ```
-   Firebase CLI automatically uploads this `.env` configuration file when deploying Cloud Functions, securely injecting these keys directly into the execution environment.
 
 ---
 
